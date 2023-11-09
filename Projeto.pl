@@ -1,8 +1,8 @@
 %Declarações iniciais
 
 :- op(900, xfy, '::').
-:- op(100, xfy, 'e').
-:- op(100, xfy, 'ou').
+:- op(200, xfy, 'e').
+:- op(200, xfy, 'ou').
 :- dynamic utente/6.
 :- dynamic registo/8.
 :- dynamic imc/3.
@@ -119,7 +119,7 @@ validar([L|R]):-
     validar(R).
 
 nao(Q):-
-    	Q, !, fail.
+    Q, !, fail.
 nao(Q).
 
 %Sistema de inferência
