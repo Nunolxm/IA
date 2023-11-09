@@ -42,9 +42,15 @@ registo(1, 1, 1, 2023, 1, 20, 187, 77).
 %Calcular IMC e atribuir classificacao
 %Predicado imc(Nutente, IMC).
 
-imc(Nutente, IMC):-
-    utente(N, Nutente, G, I, A, P),
+imc(NUtente, IMC):-
+    utente(N, NUtente, G, I, A, P),
+    integer(A), integer(P),
     IMC is P/(A/100)^2.
+
+imc(NUtente, imc_desconhecido):-
+    utente(N, NUtente, G, I, A, P).
+
+-imc(NUtente, IMC).
     
 %Predicado classificacao(IMC, Classificação) 
 
