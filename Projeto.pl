@@ -6,8 +6,7 @@
 :- dynamic utente/6.
 :- dynamic registo/8.
 :- dynamic imc/3.
-:- dynamic '-'/1.
-:- dynamic registar/1.
+:- discontiguous (-)/1.
 
 %Predicado Utente(Nome, NUtente, Genero, Idade, Altura, Peso).
 
@@ -137,6 +136,10 @@ si(Q,falso):-
 si(Q,desconhecido):-
     nao(Q),
     nao(-Q).
+
+nao(Q):-
+    Q, !, fail.
+nao(Q).
 
 e(Q1, Q2):-
     Q1, Q2.
