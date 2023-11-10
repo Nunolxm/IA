@@ -11,7 +11,7 @@
 %Predicado Utente(Nome, NUtente, Genero, Idade, Altura, Peso).
 
 utente(toni, 1, m, 20, 187, 77).
-utente(toze, 2, m, 20, 187, 890).
+utente(toze, 2, m, 20, 187, pesodesconhecido).
 
 %Predicado Registo(NRegisto, Dia, Mês, Ano, NUtente, Idade, Altura, Peso).
 
@@ -19,37 +19,21 @@ registo(1, 1, 1, 2023, 1, 20, 187, 77).
 
 %Invariantes
 
-%Nao pode adicionar mais que um utente com o mesmo numero de utente
-+utente(Nome, NUtente, Genero, Idade, Altura, Peso)::(findall( (Nome, NUtente, Genero, Idade, Altura, Peso),
-    (utente(Nome, NUtente, Genero, Idade, Altura, Peso)),S ),
-    length( S,N ), N == 1).
 
-%Nao pode adicionar mais que um registo com o mesmo numero de registo
-+registo(NRegisto, Dia, Mes, Ano, NUtente, Idade, Altura, Peso)::(findall((NRegisto,NUtente),
-    registo(NRegisto, Dia, Mes, Ano, NUtente, Idade, Altura, Peso),S ),
-    write(S),
-    length( S,N ), N == 1).
-
-%Nao pode adicionar um registo para um utente que nao exista
-+registo(NRegisto, Dia, Mes, Ano, NUtente, Idade, Altura, Peso)::(findall((Nome),
-    (registo(NRegisto, Dia, Mes, Ano, NUtente, Idade, Altura, Peso),
-    utente(Nome, NUtente, Genero, Idade, Altura, Peso)),S ),
-    write(S),
-    length( S,N ), N == 1).
 
 
 %Calcular IMC e atribuir classificacao
 %Predicado imc(Nutente, IMC).
 
 imc(NUtente, IMC):-
-    utente(N, NUtente, G, I, A, P),
+    utente(_, NUtente, _, _, A, P),
     integer(A), integer(P),
     IMC is P/(A/100)^2.
 
 imc(NUtente, imc_desconhecido):-
-    utente(N, NUtente, G, I, A, P).
+    utente(_, NUtente, _, _, _, _).
 
--imc(NUtente, IMC).
+-imc(_NUtente, _IMC).
     
 %Predicado classificacao(IMC, Classificação) 
 
@@ -76,10 +60,12 @@ classificacao(IMC, 'Obesidade Classe II (Severa)'):-
 classificacao(IMC, 'Obesidade Classe III (Mórbida)'):-
     IMC >= 40.
 
+%Representação de Conhecimento Negativo
+
 %Pressuposto do Mundo Fechado
 
 -utente(N, Num, G, I, A, P):-
-    nao(utente(N, Num, G, i, A, P)),
+    nao(utente(N, Num, G, I, A, P)),
     nao(excecao(utente(N, Num, G, I, A, P))).
 
 -registo(NRegisto, D, M, A, NUtente, I, A, P):-
@@ -109,23 +95,19 @@ apagar_registo(Termo):-
     retirar(Termo),
     validar(Lista).
 
-atualizar(registo(NRegisto, Dia, Mes, Ano, NUtente, Idade_novo, Altura_novo, Peso_novo)):-
-    retract(utente(Nome, NUtente, Genero, Idade, Altura, Peso)),
+atualizar(registo(_NRegisto, _Dia, _Mes, _Ano, NUtente, Idade_novo, Altura_novo, Peso_novo)):-
+    retract(utente(Nome, NUtente, Genero, _, _, _)),
     assert(utente(Nome, NUtente, Genero, Idade_novo, Altura_novo, Peso_novo)).
 
 inserir(Termo):-
     assert(Termo).
 inserir(Termo):-
-    retract(Termo), !, Fail
+    retract(Termo), !, Fail.
 
 validar([]).
 validar([L|R]):-
     L,
     validar(R).
-
-nao(Q):-
-    Q, !, fail.
-nao(Q).
 
 %Sistema de inferência
 
@@ -139,7 +121,7 @@ si(Q,desconhecido):-
 
 nao(Q):-
     Q, !, fail.
-nao(Q).
+nao(_Q).
 
 e(Q1, Q2):-
     Q1, Q2.
