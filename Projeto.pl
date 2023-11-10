@@ -7,6 +7,7 @@
 :- dynamic registo/8.
 :- dynamic imc/3.
 :- discontiguous (-)/1.
+:- dynamic excecao/1.
 
 %Predicado Utente(Nome, NUtente, Genero, Idade, Altura, Peso).
 
@@ -18,6 +19,14 @@ utente(toze, 2, m, 20, 187, pesodesconhecido).
 registo(1, 1, 1, 2023, 1, 20, 187, 77).
 
 %Invariantes
+
+%Não inserir utentes com nUte repetidos
++utente(_, Num, _, _, _, _) :: (findall(Num, utente(_, Num, _, _, _, _), S), length(S, L), L == 1).
+
+%Não inserir registos com nReg repetidos
+
+
+%Não inserir registos com nUte que não estejam na base de dados
 
 
 
@@ -76,12 +85,12 @@ classificacao(IMC, 'Obesidade Classe III (Mórbida)'):-
 
 registar_utente(Termo):-
     findall(Inv, +Termo::Inv, Lista),
-    inserir(Termo),
+    insercao(Termo),
     validar(Lista).
 
 adicionar_registo(Termo):-
     findall(Inv, +Termo::Inv, Lista),
-    inserir(Termo),
+    insercao(Termo),
     validar(Lista),
     atualizar(Termo).
 
@@ -99,15 +108,11 @@ atualizar(registo(_NRegisto, _Dia, _Mes, _Ano, NUtente, Idade_novo, Altura_novo,
     retract(utente(Nome, NUtente, Genero, _, _, _)),
     assert(utente(Nome, NUtente, Genero, Idade_novo, Altura_novo, Peso_novo)).
 
-inserir(Termo):-
-    assert(Termo).
-inserir(Termo):-
-    retract(Termo), !, Fail.
+insercao(Termo):-assert(Termo).
+insercao(Termo):-retract(Termo),!,fail.
 
 validar([]).
-validar([L|R]):-
-    L,
-    validar(R).
+validar([H|T]):-H, validar(T).
 
 %Sistema de inferência
 
