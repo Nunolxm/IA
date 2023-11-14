@@ -95,7 +95,7 @@ imc(NUtente, IMC):-
     IMC is P/(A/100)^2.
 
 imc(NUtente, imc_desconhecido):-
-    utente(_, NUtente, _, _, _, _),
+    utente(_, NUtente, _, _, _, _).
 
 -imc(_NUtente, _IMC).
     
